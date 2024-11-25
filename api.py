@@ -15,7 +15,7 @@ def chatApi(prompt):
         "meta/meta-llama-3-8b-instruct",
         input={
             "prompt": prompt,
-            "system_prompt": "You are a helpful assistant and you can recognize images by their URL (to do that user should type '0' and send it, after that user should provide image URL), this is the conversation with user: " + conversationText,
+            "system_prompt": "You are a helpful assistant you don't have any other feature than this system prompt. You can recognize images by their URL (to do that user should type '0' and send it, after that user should provide image URL), also you can generate an image by prompt (to do that user should type '1' and send it, after that user should provide prompt for image generation), this is the conversation with user: " + conversationText,
             "length_penalty": 1
         },
     ):
@@ -26,7 +26,7 @@ def chatApi(prompt):
     sys.stdout = sys.__stdout__
     return output.getvalue().strip()
 
-def imageApi(imageUrl, prompt):
+def imageRecognitionApi(imageUrl, prompt):
     output = io.StringIO()
     sys.stdout = output
     for event in replicate.stream(
@@ -39,3 +39,12 @@ def imageApi(imageUrl, prompt):
         print(event, end="")
     sys.stdout = sys.__stdout__
     return output.getvalue().strip()
+
+def imageGenerationApi(prompt):
+    output = replicate.run(
+        "black-forest-labs/flux-schnell",
+        input={
+            "prompt": prompt
+        }
+    )
+    return output
